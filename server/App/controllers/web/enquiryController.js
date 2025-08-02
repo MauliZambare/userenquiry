@@ -31,4 +31,23 @@ let enquiryList = async (req, res) => {
     }
 };
 
-module.exports = {enquiryInsert , enquiryList};
+
+let enquiryDelete = async (req, res) => {
+    let enqId = req.params.id;
+    let enquiry = await enquiryModel.deleteOne({ _id: enqId });
+    res.send({ status: 1, message: "Enquiry deleted successfully", enquiry });
+};
+
+
+let enquirysingleRow = async (req, res) => {
+    let enqId = req.params.id;
+    let enquiry = await enquiryModel.findOne({ _id: enqId });
+    res.send({ status: 1, enquiry });
+};
+
+cmodule.exports = {
+  enquiryInsert,
+  enquiryList,
+  enquiryDelete,
+  enquirysingleRow
+};

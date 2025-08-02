@@ -3,10 +3,46 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2';
 import './enquiry.css'; // Optional: your custom styles
 
 export default function Enquiry() {
   const [enquiryList, setEnquiryList] = useState([]);
+
+  // ✅ Function to delete a row by ID with SweetAlert
+  const deleteRow = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`http://localhost:8000/api/website/enquiry/enquiryDelete/${id}`)
+          .then((res) => {
+            if (res.data.status) {
+              Swal.fire("Deleted!", "Enquiry has been deleted.", "success");
+              setEnquiryList(enquiryList.filter(item => item._id !== id));
+            } else {
+              Swal.fire("Error", "Failed to delete enquiry", "error");
+            }
+          })
+          .catch((err) => {
+            console.error("Error while deleting:", err);
+            Swal.fire("Error", "Something went wrong", "error");
+          });
+      }
+    });
+  };
+
+  // ✅ Function to show alert for update (placeholder)
+  const Row = (id) => {
+    alert("Edit functionality is not implemented yet for ID: " + id);
+  };
 
   // Save Enquiry
   const saveEnquiry = (e) => {
@@ -120,8 +156,8 @@ export default function Enquiry() {
                         <td>{enquiry.message}</td>
                         <td>
                           <div className="d-flex gap-2">
-                            <button className="btn btn-sm btn-secondary">Update</button>
-                            <button className="btn btn-sm btn-danger">Delete</button>
+                            <button onClick={() => deleteRow(enquiry._id)} className="btn btn-sm btn-danger">Delete</button>
+                            <button onClick={() => Row(enquiry._id)} className="btn btn-sm btn-secondary">Update</button>
                           </div>
                         </td>
                       </tr>
