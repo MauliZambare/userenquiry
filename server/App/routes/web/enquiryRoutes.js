@@ -1,17 +1,20 @@
-const express = require('express');
-const router = express.Router();
-const {
-    enquiryInsert,
-    enquiryList,
-    enquiryDelete,
-    enquirysingleRow,
-    updateEnquiry // ✅ Add this
-} = require('../../controllers/web/enquiryController');
+let express = require('express');
+const { enquiryInsert, enquiryList, enquiryDelete } = require('../../controllers/web/enquiryController');
 
-router.post('/enquiry/insert', enquiryInsert);
-router.get('/enquiry/list', enquiryList);
-router.get('/enquirysingleRow/:id', enquirysingleRow);
-router.delete('/enquiry/delete/:id', enquiryDelete);
-router.post('/enquiry/update/:id', updateEnquiry); // ✅ Update route
+let enquiryRouter = express.Router();
 
-module.exports = router;
+
+enquiryRouter.post("/insert",enquiryInsert)
+
+enquiryRouter.get("/view", enquiryList)
+
+enquiryRouter.delete("/enquiryDelete/:id", enquiryDelete);
+
+
+
+//http://localhost:8000/api/website/enquiry/insert
+//http://localhost:8000/api/website/enquiry/view
+//http://localhost:8000/api/website/enquiry/enquiryDelete/id
+
+
+module.exports = enquiryRouter;
