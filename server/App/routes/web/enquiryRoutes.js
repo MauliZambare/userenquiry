@@ -5,7 +5,7 @@ let enquiryRouter = express.Router();
 
 enquiryRouter.post("/insert",enquiryInsert)
 
-enquiryRouter.post("/view", enquiryList)
+enquiryRouter.get("/view", enquiryList)
 
 
 module.exports = enquiryRouter;
