@@ -4,12 +4,20 @@ import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
-import './enquiry.css'; // Optional: your custom styles
+import './enquiry.css';
 
 export default function Enquiry() {
   const [enquiryList, setEnquiryList] = useState([]);
+  const [editMode, setEditMode] = useState(false);
+  const [currentId, setCurrentId] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: ''
+  });
 
-  // ✅ Function to delete a row by ID with SweetAlert
+  // ✅ Delete Row by ID
   const deleteRow = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -39,37 +47,56 @@ export default function Enquiry() {
     });
   };
 
-  // ✅ Function to show alert for update (placeholder)
+  // ✅ Load data into form for update
   const Row = (id) => {
-    alert("Edit functionality is not implemented yet for ID: " + id);
+    const enquiry = enquiryList.find(item => item._id === id);
+    if (enquiry) {
+      setFormData(enquiry);
+      setCurrentId(id);
+      setEditMode(true);
+      window.scrollTo(0, 0); // scroll to top where the form is
+    }
   };
 
-  // Save Enquiry
+  // ✅ Handle input changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // ✅ Save or Update Enquiry
   const saveEnquiry = (e) => {
     e.preventDefault();
 
-    const formData = new FormData(e.target);
-    let Form = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
-      message: formData.get('message')
-    };
-
-    axios.post('http://localhost:8000/api/website/enquiry/insert', Form)
-      .then((res) => {
-        console.log("Response:", res.data);
-        toast.success('Enquiry Saved Successfully');
-        e.target.reset(); // Clear form
-        getAllEnquiries(); // Refresh list after save
-      })
-      .catch((err) => {
-        console.error("Error while saving:", err);
-        toast.error('Failed to save enquiry');
-      });
+    if (editMode) {
+      // Update API
+      axios.put(`http://localhost:8000/api/website/enquiry/update/${currentId}`, formData)
+        .then((res) => {
+          toast.success("Enquiry Updated Successfully");
+          setEditMode(false);
+          setCurrentId(null);
+          setFormData({ name: '', email: '', phone: '', message: '' });
+          getAllEnquiries();
+        })
+        .catch((err) => {
+          console.error("Error while updating:", err);
+          toast.error("Failed to update enquiry");
+        });
+    } else {
+      // Insert API
+      axios.post('http://localhost:8000/api/website/enquiry/insert', formData)
+        .then((res) => {
+          toast.success('Enquiry Saved Successfully');
+          setFormData({ name: '', email: '', phone: '', message: '' });
+          getAllEnquiries();
+        })
+        .catch((err) => {
+          console.error("Error while saving:", err);
+          toast.error('Failed to save enquiry');
+        });
+    }
   };
 
-  // Fetch All Enquiries
+  // ✅ Fetch All Enquiries
   const getAllEnquiries = () => {
     axios.get('http://localhost:8000/api/website/enquiry/view')
       .then((res) => {
@@ -100,29 +127,31 @@ export default function Enquiry() {
           <div className="col-md-4 px-4">
             <div className="card shadow-sm">
               <div className="card-body">
-                <h4 className="card-title fw-bold mb-3">Enquiry Form</h4>
+                <h4 className="card-title fw-bold mb-3">{editMode ? "Update Enquiry" : "Enquiry Form"}</h4>
                 <form onSubmit={saveEnquiry}>
                   <div className="mb-3">
                     <label htmlFor="name" className="form-label">Name</label>
-                    <input type="text" className="form-control" id="name" name="name" required />
+                    <input type="text" className="form-control" id="name" name="name" required value={formData.name} onChange={handleChange} />
                   </div>
 
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label">Email</label>
-                    <input type="email" className="form-control" id="email" name="email" required />
+                    <input type="email" className="form-control" id="email" name="email" required value={formData.email} onChange={handleChange} />
                   </div>
 
                   <div className="mb-3">
                     <label htmlFor="phone" className="form-label">Phone</label>
-                    <input type="text" className="form-control" id="phone" name="phone" required />
+                    <input type="text" className="form-control" id="phone" name="phone" required value={formData.phone} onChange={handleChange} />
                   </div>
 
                   <div className="mb-3">
                     <label htmlFor="message" className="form-label">Message</label>
-                    <textarea className="form-control" id="message" name="message" rows="3" required></textarea>
+                    <textarea className="form-control" id="message" name="message" rows="3" required value={formData.message} onChange={handleChange}></textarea>
                   </div>
 
-                  <button type="submit" className="btn btn-primary w-100">Submit</button>
+                  <button type="submit" className="btn btn-primary w-100">
+                    {editMode ? "Update" : "Submit"}
+                  </button>
                 </form>
               </div>
             </div>

@@ -39,9 +39,25 @@ let enquiryDelete = async (req, res) => {
 };
 
 
+let enquiryUpdate = async (req, res) => {
+    let enqId = req.params.id;
+    let { name, email, phone, message } = req.body;
+    if (!name || !email || !phone || !message) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+    let enquiry = await enquiryModel.findByIdAndUpdate(enqId, {
+        name: name, email: email, phone: phone, message: message    
+    }, { new: true });
+    if (!enquiry) {
+        return res.status(404).json({ message: "Enquiry not found" });
+    }
+    res.send({ status: 1, message: "Enquiry updated successfully", enquiry });
+};
 
 
 
 
 
-module.exports = {enquiryInsert , enquiryList , enquiryDelete };
+
+
+module.exports = {enquiryInsert , enquiryList , enquiryDelete , enquiryUpdate};
