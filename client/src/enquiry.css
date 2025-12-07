@@ -3,7 +3,7 @@
   margin: 60px auto;
   padding: 35px;
   border-radius: 10px;
-  background: #ffffff;
+  background: #ad1f1f;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   transition: all 0.3s ease-in-out;
@@ -28,7 +28,7 @@
   width: 100%;
   padding: 10px 12px;
   margin-bottom: 20px;
-  border: 1px solid #ced4da;
+  border: 1px solid #2b65a0;
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.3s ease;
@@ -45,7 +45,7 @@
   width: 100%;
   padding: 12px;
   background: linear-gradient(to right, #007bff, #0056b3);
-  color: white;
+  color: rgb(198, 17, 17);
   font-size: 16px;
   font-weight: 600;
   border: none;
